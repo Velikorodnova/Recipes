@@ -1,9 +1,9 @@
 package com.skypro.recipes.service;
-
 import com.skypro.recipes.model.Ingredient;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -26,5 +26,24 @@ public class IngredientServiceIml implements IngredientService {
         } else {
             throw new RuntimeException("Ингредиент не найден!");
         }
+    }
+
+    @Override
+    public Ingredient inredientEditing(long id, Ingredient ingredient) {
+        if (ingredientMap.containsKey(id)) {
+            ingredientMap.put(id, ingredient);
+            return ingredient;
+        }
+        return null;
+    }
+
+    @Override
+    public Ingredient remove(long id) {
+        return ingredientMap.remove(id);
+    }
+
+    @Override
+    public List<Ingredient> getAll() {
+        return new ArrayList<>(this.ingredientMap.values());
     }
 }
