@@ -5,7 +5,6 @@ import com.skypro.recipes.service.RecipeService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-
 @RequestMapping("/recipe")
 public class RecipeController {
     private final RecipeService recipeService;

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+
 @Service
 public class RecipeServiceIml implements RecipeService {
     private final Map<Long, Recipe> recipesMap = new HashMap<>();
@@ -13,17 +14,16 @@ public class RecipeServiceIml implements RecipeService {
 
     @Override
     public Recipe add(Recipe recipe) {
-        try {
-            recipesMap.put(this.counter++, recipe);
-            return recipe;
-        } catch (Exception e) {
-            System.out.println("Рецепт уже существует!");
-        }
+        recipesMap.put(this.counter++, recipe);
         return recipe;
     }
 
     @Override
     public Recipe get(long id) {
-        return recipesMap.get(id);
+        if (recipesMap.containsKey(id)) {
+            return recipesMap.get(id);
+        } else {
+            throw new RuntimeException("Рецепт не найден!");
+        }
     }
 }

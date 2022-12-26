@@ -15,18 +15,16 @@ public class IngredientServiceIml implements IngredientService {
 
     @Override
     public Ingredient add(Ingredient ingredient) {
-        try {
-            ingredientMap.put(this.counter++, ingredient);
-            return ingredient;
-        } catch (Exception e) {
-            System.out.print("Ингридиент уже существует!");
-        }
+        ingredientMap.put(this.counter++, ingredient);
         return ingredient;
     }
 
-
     @Override
     public Ingredient get(long id) {
-        return ingredientMap.get(id);
+        if (ingredientMap.containsKey(id)) {
+            return ingredientMap.get(id);
+        } else {
+            throw new RuntimeException("Ингредиент не найден!");
+        }
     }
 }
