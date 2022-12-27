@@ -16,7 +16,11 @@ public class RecipeServiceIml implements RecipeService {
 
     @Override
     public Recipe add(Recipe recipe) {
-        recipesMap.put(this.counter++, recipe);
+        if (recipesMap.containsKey(recipesMap.get(recipe))) {
+            throw new AddingError("Ошибка при добавлении элемента!");
+        } else {
+            recipesMap.put(this.counter++, recipe);
+        }
         return recipe;
     }
 
@@ -25,7 +29,7 @@ public class RecipeServiceIml implements RecipeService {
         if (recipesMap.containsKey(id)) {
             return recipesMap.get(id);
         } else {
-            throw new RuntimeException("Рецепт не найден!");
+            throw new ElementNotFound("Рецепт не найден!");
         }
     }
 
@@ -37,6 +41,7 @@ public class RecipeServiceIml implements RecipeService {
         }
         return null;
     }
+
     @Override
 
     public Recipe remove(long id) {

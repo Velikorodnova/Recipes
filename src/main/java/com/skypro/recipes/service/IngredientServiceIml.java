@@ -1,6 +1,8 @@
 package com.skypro.recipes.service;
+
 import com.skypro.recipes.model.Ingredient;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,14 +10,15 @@ import java.util.Map;
 
 @Service
 public class IngredientServiceIml implements IngredientService {
-
     private final Map<Long, Ingredient> ingredientMap = new HashMap<>();
-
     private Long counter = 0L;
-
     @Override
     public Ingredient add(Ingredient ingredient) {
-        ingredientMap.put(this.counter++, ingredient);
+        if (ingredientMap.containsKey(ingredientMap.get(ingredient))) {
+            throw new AddingError("Ошибка при добавлении элемента!");
+        } else {
+            ingredientMap.put(this.counter++, ingredient);
+        }
         return ingredient;
     }
 
@@ -24,7 +27,7 @@ public class IngredientServiceIml implements IngredientService {
         if (ingredientMap.containsKey(id)) {
             return ingredientMap.get(id);
         } else {
-            throw new RuntimeException("Ингредиент не найден!");
+            throw new ElementNotFound("Ингредиент не найден!");
         }
     }
 
