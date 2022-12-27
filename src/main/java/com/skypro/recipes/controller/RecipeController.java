@@ -19,13 +19,14 @@ public class RecipeController {
     public Recipe addRecipe(@RequestBody Recipe recipe) {
         return recipeService.add(recipe);
     }
+
     @GetMapping("/{id}")
     public Recipe getRecipe(@PathVariable("id") long id) {
         return recipeService.get(id);
     }
 
     @PutMapping("/{id}")
-    public Recipe recipeEditing(@PathVariable ("id") long id, @RequestBody Recipe recipe) {
+    public Recipe recipeEditing(@PathVariable("id") long id, @RequestBody Recipe recipe) {
         return recipeService.recipeEditing(id, recipe);
     }
 
@@ -33,8 +34,10 @@ public class RecipeController {
     public Recipe removeRecipe(@PathVariable("id") long id) {
         return recipeService.remove(id);
     }
+
     @GetMapping
     public List<Recipe> getAll() {
         return this.recipeService.getAll();
     }
 }
+
