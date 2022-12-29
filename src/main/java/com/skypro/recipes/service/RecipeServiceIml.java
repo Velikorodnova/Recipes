@@ -1,6 +1,7 @@
 package com.skypro.recipes.service;
 
 import com.skypro.recipes.model.Recipe;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class RecipeServiceIml implements RecipeService {
         return recipe;
     }
 
+
     @Override
     public Recipe get(long id) {
         if (recipesMap.containsKey(id)) {
@@ -35,7 +37,8 @@ public class RecipeServiceIml implements RecipeService {
 
     @Override
     public Recipe recipeEditing(long id, Recipe recipe) {
-        if (recipesMap.containsKey(id)) {
+        if (recipesMap.containsKey(id) || (StringUtils.isAllEmpty((CharSequence) recipesMap.get(recipe)) ||
+        (StringUtils.isBlank ((CharSequence)recipesMap.get(recipe))))) {
             recipesMap.put(id, recipe);
             return recipe;
         }
