@@ -1,5 +1,7 @@
 package com.skypro.recipes.service;
+
 import com.skypro.recipes.model.Ingredient;
+
 import java.util.List;
 
 public interface IngredientService {
@@ -7,7 +9,7 @@ public interface IngredientService {
 
     Ingredient get(long id);
 
-    Ingredient inredientEditing(long id, Ingredient ingredient);
+    Ingredient ingredientEditing(long id, Ingredient ingredient);
 
     Ingredient remove(long id);
 

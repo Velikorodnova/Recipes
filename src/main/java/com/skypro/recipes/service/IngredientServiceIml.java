@@ -43,13 +43,19 @@ public class IngredientServiceIml implements IngredientService {
     }
 
     @Override
-    public Ingredient inredientEditing(long id, Ingredient ingredient) {
-        if (ingredientMap.containsKey(id) || (!StringUtils.isAllEmpty((CharSequence) ingredientMap.get(ingredient)) ||
-        (!StringUtils.isBlank ((CharSequence)ingredientMap.get(ingredient))))) {
+    public Ingredient ingredientEditing(long id, Ingredient ingredient) {
+        if (StringUtils.isBlank(ingredient.getName())) {
+            throw new EmptyError("Необходимо полностью заполнить поля");
+        }
+        if (StringUtils.isAllEmpty(ingredient.getName())) {
+            throw new EmptyError("Необходимо полностью заполнить поля");
+        }
+        if (ingredientMap.containsKey(id)) {
             ingredientMap.put(id, ingredient);
+            saveToFile();
             return ingredient;
         }
-        return null;
+        return ingredient;
     }
 
     @Override

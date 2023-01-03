@@ -41,19 +41,34 @@ public class RecipeServiceIml implements RecipeService {
             return recipesMap.get(id);
         } else {
             throw new ElementNotFound("Рецепт не найден!");
-        }
-    }
+        }}
 
     @Override
     public Recipe recipeEditing(long id, Recipe recipe) {
-        recipesMap.put(id, recipe);
-        if (recipesMap.containsKey(id) & (StringUtils.isAllEmpty((CharSequence) recipesMap.get(recipe)) &
-                (StringUtils.isBlank((CharSequence) recipesMap.get(recipe))))) {
+        if (StringUtils.isBlank(recipe.getName())) {
             throw new EmptyError("Необходимо полностью заполнить поля");
         }
-        saveToFile();
+        if (StringUtils.isAllEmpty(recipe.getName())) {
+            throw new EmptyError("Необходимо полностью заполнить поля");
+        }
+        if (recipesMap.containsKey(id)) {
+            recipesMap.put(id, recipe);
+            saveToFile();
+            return recipe;
+    }
         return recipe;
     }
+
+//    @Override
+//    public Recipe recipeEditing(long id, Recipe recipe) {
+//        recipesMap.put(id, recipe);
+//        if (recipesMap.containsKey(id) & (StringUtils.isAllEmpty((CharSequence) recipesMap.get(recipe)) &
+//                (StringUtils.isBlank((CharSequence) recipesMap.get(recipe))))) {
+//            throw new EmptyError("Необходимо полностью заполнить поля");
+//        }
+//        saveToFile();
+//        return recipe;
+//    }
 
     @Override
     public Recipe remove(long id) {

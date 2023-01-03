@@ -78,7 +78,7 @@ public class IngredientController {
                     })
     })
     public Ingredient ingredientEditing(@PathVariable("id") long id, @RequestBody Ingredient ingredient) {
-        return ingredientService.inredientEditing(id, ingredient);
+        return ingredientService.ingredientEditing(id, ingredient);
     }
 
     @DeleteMapping("/{id}")
