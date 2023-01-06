@@ -1,6 +1,5 @@
 package com.skypro.recipes.controller;
 import com.skypro.recipes.model.Ingredient;
-import com.skypro.recipes.model.Recipe;
 import com.skypro.recipes.service.IngredientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

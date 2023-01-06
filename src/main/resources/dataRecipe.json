@@ -1,1 +1,30 @@
-{"0":{"name":"Плов","timeForPreparing":40,"ingredient":[{"name":"Рис","count":300,"measure":"грамм"}],"steps":["string"]}}
+{
+  "0": {
+    "name": "Пельмени",
+    "timeForPreparing": 60,
+    "ingredient": [
+      {
+        "name": "Мука",
+        "count": 400,
+        "measure": "грамм"
+      }
+    ],
+    "steps": [
+      "string"
+    ]
+  },
+  "1": {
+    "name": "Плов",
+    "timeForPreparing": 40,
+    "ingredient": [
+      {
+        "name": "Рис",
+        "count": 300,
+        "measure": "грамм"
+      }
+    ],
+    "steps": [
+      "string"
+    ]
+  }
+}

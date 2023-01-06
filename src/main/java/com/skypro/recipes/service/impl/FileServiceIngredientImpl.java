@@ -1,17 +1,19 @@
-package com.skypro.recipes.service;
+package com.skypro.recipes.service.impl;
 
+import com.skypro.recipes.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Service
-public class FileServiceRecipeImpl implements FileService {
+public class FileServiceIngredientImpl implements FileService {
     @Value("${path.to.data.file}")
     private String dataFilePath;
-    @Value("${nameR.of.data.file}")
+    @Value("${nameI.of.data.file}")
     private String dataFileName;
 
     @Override
@@ -46,6 +48,20 @@ public class FileServiceRecipeImpl implements FileService {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public File getDataFile() {
+        return new File(dataFilePath + "/" + dataFileName);
+    }
+
+    @Override
+    public Path createTempFile(String suffix) {
+        try {
+            return Files.createTempFile(Path.of(dataFilePath), "tempFile", suffix);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

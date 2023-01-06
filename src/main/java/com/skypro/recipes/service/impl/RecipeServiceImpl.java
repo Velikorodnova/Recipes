@@ -1,29 +1,35 @@
-package com.skypro.recipes.service;
+package com.skypro.recipes.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skypro.recipes.model.Recipe;
+import com.skypro.recipes.service.*;
+import com.skypro.recipes.service.exception.AddingError;
+import com.skypro.recipes.service.exception.ElementNotFound;
+import com.skypro.recipes.service.exception.EmptyError;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.util.*;
 
 @Service
-public class RecipeServiceIml implements RecipeService {
+public class RecipeServiceImpl implements RecipeService {
     private Map<Long, Recipe> recipesMap = new HashMap<>();
     private final FileService fileService;
 
     private Long counter = 0L;
 
-    public RecipeServiceIml(@Qualifier("fileServiceRecipeImpl") FileService fileService) {
+    public RecipeServiceImpl(@Qualifier("fileServiceRecipeImpl") FileService fileService) {
         this.fileService = fileService;
     }
 
+    @PostConstruct
+    private void init() {
+        readFromFile();
+    }
     @Override
     public Recipe add(Recipe recipe) {
         if (recipesMap.containsKey(recipesMap.get(recipe))) {
@@ -59,17 +65,6 @@ public class RecipeServiceIml implements RecipeService {
         return recipe;
     }
 
-//    @Override
-//    public Recipe recipeEditing(long id, Recipe recipe) {
-//        recipesMap.put(id, recipe);
-//        if (recipesMap.containsKey(id) & (StringUtils.isAllEmpty((CharSequence) recipesMap.get(recipe)) &
-//                (StringUtils.isBlank((CharSequence) recipesMap.get(recipe))))) {
-//            throw new EmptyError("Необходимо полностью заполнить поля");
-//        }
-//        saveToFile();
-//        return recipe;
-//    }
-
     @Override
     public Recipe remove(long id) {
         return recipesMap.remove(id);
@@ -90,9 +85,9 @@ public class RecipeServiceIml implements RecipeService {
     }
 
     private void readFromFile() {
+        String json = fileService.readFromFile();
         try {
-            String json = fileService.readFromFile();
-            recipesMap = new ObjectMapper().readValue(json, new TypeReference<>() {
+            recipesMap = new ObjectMapper().readValue(json, new TypeReference<HashMap<Long, Recipe>>() {
             });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
