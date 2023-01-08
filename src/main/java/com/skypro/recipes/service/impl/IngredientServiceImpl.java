@@ -13,6 +13,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Service
@@ -93,5 +98,18 @@ public class IngredientServiceImpl implements IngredientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Path createIngredientFile() throws IOException {
+        Path path = fileService.createTempFile("ingredient");
+        for (Ingredient ingredient : ingredientMap.values()) {
+            try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                writer.append("Наименование ингредиента: ").append(ingredient.getName()).append("\n").append
+                        ("Количество: ").append(String.valueOf(ingredient.getCount())).append("\n").append
+                        ("Единица измерения: ").append(String.valueOf(ingredient.getMeasure())).append("\n" + "\n");
+            }
+        }
+        return path;
     }
 }

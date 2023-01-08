@@ -13,6 +13,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Service
@@ -72,7 +77,8 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<Recipe> getAll() {
-        return new ArrayList<>(this.recipesMap.values());
+        return List.of();
+//        return new ArrayList<>(this.recipesMap.values());
     }
 
     private void saveToFile() {
@@ -92,5 +98,17 @@ public class RecipeServiceImpl implements RecipeService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+    @Override
+    public Path createRecipeFile () throws IOException {
+        Path path = fileService.createTempFile("recipe");
+        for (Recipe recipe : recipesMap.values()) {
+            try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                writer.append("Наименование рецепта: ").append(recipe.getName()).append("\n").append
+                        ("Время приготовления: ").append(String.valueOf(recipe.getTimeForPreparing())).append("\n").append
+                        ("Шаги: ").append(String.valueOf(recipe.getSteps())).append("\n" + "\n");
+            }
+        }
+        return path;
     }
 }

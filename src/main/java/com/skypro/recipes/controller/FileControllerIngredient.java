@@ -1,6 +1,11 @@
 package com.skypro.recipes.controller;
 
+import com.skypro.recipes.model.Ingredient;
+import com.skypro.recipes.service.IngredientService;
 import com.skypro.recipes.service.impl.FileServiceIngredientImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -11,16 +16,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/files")
 public class FileControllerIngredient {
     private final FileServiceIngredientImpl fileServiceIngredient;
+    private final IngredientService ingredientService;
 
-    public FileControllerIngredient(FileServiceIngredientImpl fileServiceIngredient) {
+    public FileControllerIngredient(FileServiceIngredientImpl fileServiceIngredient, IngredientService ingredientService) {
         this.fileServiceIngredient = fileServiceIngredient;
+        this.ingredientService = ingredientService;
     }
 
+    @Operation(summary = "Скачать файл")
     @GetMapping("/export/ingredient")
     public ResponseEntity<InputStreamResource> downloadDataFile() throws FileNotFoundException {
         File file = fileServiceIngredient.getDataFile();
@@ -36,6 +46,7 @@ public class FileControllerIngredient {
         }
     }
 
+    @Operation(summary = "Загрузить файл")
     @PutMapping(value = "/import/ingredient", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadDataFile(@RequestParam MultipartFile file) {
         fileServiceIngredient.cleanDataFile();
@@ -47,5 +58,30 @@ public class FileControllerIngredient {
             e.printStackTrace();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @Operation(summary = "Скачать файл с ингредиентами",
+            description = ".txt")
+
+    @ApiResponses(value = {@ApiResponse(responseCode = "200",
+            description = "Файл успешно сформирован")})
+
+    @GetMapping("/ingredientInTextFile")
+    public ResponseEntity<InputStreamResource> getRecipesInTextFile() {
+        try {
+            Path path = ingredientService.createIngredientFile();
+            if (Files.size(path) == 0) {
+                return ResponseEntity.noContent().build();
+            }
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"FileIngredient.txt\"")
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

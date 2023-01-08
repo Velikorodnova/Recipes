@@ -14,4 +14,13 @@ public class Recipe {
     private int timeForPreparing;
     private List<Ingredient> ingredient;
     private List<String> steps;
+
+    @Override
+    public String toString() {
+        return "Рецепт " +
+                " Название рецепта " + name + '\'' +
+                ", Время приготовления " + timeForPreparing +
+                ", Ингридиенты " + ingredient +
+                ", Шаги приготовления" + steps;
+    }
 }

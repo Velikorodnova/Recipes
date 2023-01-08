@@ -2,6 +2,8 @@ package com.skypro.recipes.service;
 
 import com.skypro.recipes.model.Ingredient;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 public interface IngredientService {
@@ -14,4 +16,6 @@ public interface IngredientService {
     Ingredient remove(long id);
 
     List<Ingredient> getAll();
+
+    Path createIngredientFile() throws IOException;
 }

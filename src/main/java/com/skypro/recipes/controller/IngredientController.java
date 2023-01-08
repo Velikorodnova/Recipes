@@ -115,6 +115,6 @@ public class IngredientController {
                     })
     })
     public List<Ingredient> getAll() {
-        return this.ingredientService.getAll();
+        return ingredientService.getAll();
     }
 }

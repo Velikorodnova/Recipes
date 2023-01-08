@@ -106,10 +106,9 @@ public class RecipeController {
     @Parameters(value ={
             @Parameter(name = "Название рецепта", example = "Плов")
     })
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Полный список рецептов получен",
+    @ApiResponses(value = {@ApiResponse
+            (responseCode = "200",
+            description = "Полный список рецептов получен",
                     content = {
                             @Content(
                                     mediaType = "application/json",
@@ -117,7 +116,7 @@ public class RecipeController {
                     })
     })
     public List<Recipe> getAll() {
-        return this.recipeService.getAll();
+        return recipeService.getAll();
     }
 }
 
