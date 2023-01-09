@@ -1,12 +1,14 @@
 package com.skypro.recipes.controller;
 
 import com.skypro.recipes.model.Ingredient;
+import com.skypro.recipes.service.FileService;
 import com.skypro.recipes.service.IngredientService;
 import com.skypro.recipes.service.impl.FileServiceIngredientImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,18 +24,18 @@ import java.nio.file.Path;
 @RestController
 @RequestMapping("/files")
 public class FileControllerIngredient {
-    private final FileServiceIngredientImpl fileServiceIngredient;
+    private final FileService fileService;
     private final IngredientService ingredientService;
 
-    public FileControllerIngredient(FileServiceIngredientImpl fileServiceIngredient, IngredientService ingredientService) {
-        this.fileServiceIngredient = fileServiceIngredient;
+    public FileControllerIngredient(@Qualifier("fileServiceIngredientImpl") FileService fileService, IngredientService ingredientService) {
+        this.fileService = fileService;
         this.ingredientService = ingredientService;
     }
 
     @Operation(summary = "Скачать файл")
     @GetMapping("/export/ingredient")
     public ResponseEntity<InputStreamResource> downloadDataFile() throws FileNotFoundException {
-        File file = fileServiceIngredient.getDataFile();
+        File file = fileService.getDataFile();
         if (file.exists()) {
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
             return ResponseEntity.ok()
@@ -49,8 +51,8 @@ public class FileControllerIngredient {
     @Operation(summary = "Загрузить файл")
     @PutMapping(value = "/import/ingredient", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadDataFile(@RequestParam MultipartFile file) {
-        fileServiceIngredient.cleanDataFile();
-        File dataFile = fileServiceIngredient.getDataFile();
+        fileService.cleanDataFile();
+        File dataFile = fileService.getDataFile();
         try (FileOutputStream fos = new FileOutputStream(dataFile)) {
             IOUtils.copy(file.getInputStream(), fos);
             return ResponseEntity.ok().build();
@@ -66,7 +68,7 @@ public class FileControllerIngredient {
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Файл успешно сформирован")})
 
-    @GetMapping("/ingredientInTextFile")
+    @GetMapping("/ingredient-in-text-file")
     public ResponseEntity<InputStreamResource> getRecipesInTextFile() {
         try {
             Path path = ingredientService.createIngredientFile();

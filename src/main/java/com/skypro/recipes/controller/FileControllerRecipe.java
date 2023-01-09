@@ -1,11 +1,13 @@
 package com.skypro.recipes.controller;
 
+import com.skypro.recipes.service.FileService;
 import com.skypro.recipes.service.RecipeService;
 import com.skypro.recipes.service.impl.FileServiceRecipeImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,17 +24,17 @@ import java.nio.file.Path;
 @RequestMapping("/files")
 public class FileControllerRecipe {
 
-    private final FileServiceRecipeImpl fileServiceRecipe;
+    private final FileService fileService;
     private final RecipeService recipeService;
 
-    public FileControllerRecipe(FileServiceRecipeImpl fileServiceRecipe, RecipeService recipeService) {
-        this.fileServiceRecipe = fileServiceRecipe;
+    public FileControllerRecipe(@Qualifier("fileServiceRecipeImpl") FileService fileService, RecipeService recipeService) {
+        this.fileService = fileService;
         this.recipeService = recipeService;
     }
     @Operation(summary = "Скачать файл")
     @GetMapping("/export/recipe")
     public ResponseEntity<InputStreamResource> downloadDataFile() throws FileNotFoundException {
-        File file = fileServiceRecipe.getDataFile();
+        File file = fileService.getDataFile();
         if (file.exists()) {
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
             return ResponseEntity.ok()
@@ -48,8 +50,8 @@ public class FileControllerRecipe {
     @Operation(summary = "Загрузить файл")
     @PutMapping(value = "/import/recipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadDataFile(@RequestParam MultipartFile file) {
-        fileServiceRecipe.cleanDataFile();
-        File dataFile = fileServiceRecipe.getDataFile();
+        fileService.cleanDataFile();
+        File dataFile = fileService.getDataFile();
         try (FileOutputStream fos = new FileOutputStream(dataFile)) {
             IOUtils.copy(file.getInputStream(), fos);
             return ResponseEntity.ok().build();
@@ -65,7 +67,7 @@ public class FileControllerRecipe {
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Файл успешно сформирован")})
 
-    @GetMapping("/recipesInTextFile")
+    @GetMapping("/recipes-in-text-file")
     public ResponseEntity<InputStreamResource> getRecipesInTextFile() {
         try {
             Path path = recipeService.createRecipeFile();

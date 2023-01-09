@@ -8,11 +8,13 @@ import com.skypro.recipes.service.*;
 import com.skypro.recipes.service.exception.AddingError;
 import com.skypro.recipes.service.exception.ElementNotFound;
 import com.skypro.recipes.service.exception.EmptyError;
+import com.skypro.recipes.service.exception.FileError;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -35,6 +37,7 @@ public class RecipeServiceImpl implements RecipeService {
     private void init() {
         readFromFile();
     }
+
     @Override
     public Recipe add(Recipe recipe) {
         if (recipesMap.containsKey(recipesMap.get(recipe))) {
@@ -52,7 +55,8 @@ public class RecipeServiceImpl implements RecipeService {
             return recipesMap.get(id);
         } else {
             throw new ElementNotFound("Рецепт не найден!");
-        }}
+        }
+    }
 
     @Override
     public Recipe recipeEditing(long id, Recipe recipe) {
@@ -66,7 +70,7 @@ public class RecipeServiceImpl implements RecipeService {
             recipesMap.put(id, recipe);
             saveToFile();
             return recipe;
-    }
+        }
         return recipe;
     }
 
@@ -99,14 +103,17 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RuntimeException(e);
         }
     }
+
     @Override
-    public Path createRecipeFile () throws IOException {
+    public Path createRecipeFile(){
         Path path = fileService.createTempFile("recipe");
         for (Recipe recipe : recipesMap.values()) {
             try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
                 writer.append("Наименование рецепта: ").append(recipe.getName()).append("\n").append
                         ("Время приготовления: ").append(String.valueOf(recipe.getTimeForPreparing())).append("\n").append
                         ("Шаги: ").append(String.valueOf(recipe.getSteps())).append("\n" + "\n");
+            } catch (IOException e) {
+                throw new FileError("Для создания файла необходимо ввести корректно данные");
             }
         }
         return path;

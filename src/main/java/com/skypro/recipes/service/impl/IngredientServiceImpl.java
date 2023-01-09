@@ -8,6 +8,7 @@ import com.skypro.recipes.service.*;
 import com.skypro.recipes.service.exception.AddingError;
 import com.skypro.recipes.service.exception.ElementNotFound;
 import com.skypro.recipes.service.exception.EmptyError;
+import com.skypro.recipes.service.exception.FileError;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -101,13 +102,15 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public Path createIngredientFile() throws IOException {
+    public Path createIngredientFile() {
         Path path = fileService.createTempFile("ingredient");
         for (Ingredient ingredient : ingredientMap.values()) {
             try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
                 writer.append("Наименование ингредиента: ").append(ingredient.getName()).append("\n").append
                         ("Количество: ").append(String.valueOf(ingredient.getCount())).append("\n").append
                         ("Единица измерения: ").append(String.valueOf(ingredient.getMeasure())).append("\n" + "\n");
+            } catch (IOException e) {
+                throw new FileError("Для создания файла необходимо ввести корректно данные");
             }
         }
         return path;
