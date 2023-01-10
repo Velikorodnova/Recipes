@@ -87,7 +87,8 @@ public class IngredientServiceImpl implements IngredientService {
             String json = new ObjectMapper().writeValueAsString(ingredientMap);
             fileService.saveToFile(json);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new FileError("Не удалось сохранить в файл");
         }
     }
 
@@ -97,7 +98,8 @@ public class IngredientServiceImpl implements IngredientService {
             ingredientMap = new ObjectMapper().readValue(json, new TypeReference<HashMap<Long, Ingredient>>() {
             });
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new FileError("Не удалось прочитать из файла");
         }
     }
 
@@ -110,6 +112,7 @@ public class IngredientServiceImpl implements IngredientService {
                         ("Количество: ").append(String.valueOf(ingredient.getCount())).append("\n").append
                         ("Единица измерения: ").append(String.valueOf(ingredient.getMeasure())).append("\n" + "\n");
             } catch (IOException e) {
+                e.printStackTrace();
                 throw new FileError("Для создания файла необходимо ввести корректно данные");
             }
         }

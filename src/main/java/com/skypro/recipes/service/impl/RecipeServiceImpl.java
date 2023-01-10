@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -90,7 +89,8 @@ public class RecipeServiceImpl implements RecipeService {
             String json = new ObjectMapper().writeValueAsString(recipesMap);
             fileService.saveToFile(json);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new FileError("Не удалось сохранить в файл");
         }
     }
 
@@ -100,7 +100,8 @@ public class RecipeServiceImpl implements RecipeService {
             recipesMap = new ObjectMapper().readValue(json, new TypeReference<HashMap<Long, Recipe>>() {
             });
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new FileError("Не удалось прочитать из файла");
         }
     }
 
@@ -113,6 +114,7 @@ public class RecipeServiceImpl implements RecipeService {
                         ("Время приготовления: ").append(String.valueOf(recipe.getTimeForPreparing())).append("\n").append
                         ("Шаги: ").append(String.valueOf(recipe.getSteps())).append("\n" + "\n");
             } catch (IOException e) {
+                e.printStackTrace();
                 throw new FileError("Для создания файла необходимо ввести корректно данные");
             }
         }
