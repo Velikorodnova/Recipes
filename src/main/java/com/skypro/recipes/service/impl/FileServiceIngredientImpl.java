@@ -1,6 +1,7 @@
 package com.skypro.recipes.service.impl;
 
 import com.skypro.recipes.service.FileService;
+import com.skypro.recipes.service.exception.FileError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +62,8 @@ public class FileServiceIngredientImpl implements FileService {
         try {
             return Files.createTempFile(Path.of(dataFilePath), "tempFile", suffix);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new FileError("Не удалось создать временный файл");
         }
     }
 }
